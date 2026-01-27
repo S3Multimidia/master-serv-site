@@ -414,6 +414,91 @@ h3 {
     }
 }
 
+/* Hydrojetting Section */
+#hidro {
+    background: linear-gradient(to bottom, transparent, rgba(0, 68, 255, 0.1));
+}
+
+.hidro-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.hidro-content {
+    flex: 1;
+}
+
+.highlight-text {
+    color: var(--color-secondary);
+    font-size: 0.8em;
+}
+
+.hidro-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #e0e0e0;
+}
+
+.hidro-list {
+    list-style: none;
+    margin: 2rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-secondary);
+}
+
+.hidro-list li {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.hidro-list li::before {
+    content: '💧';
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.hidro-footer {
+    font-weight: 700;
+    color: var(--color-primary) !important;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.hidro-image {
+    flex: 1;
+    position: relative;
+}
+
+.hidro-image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 20px 20px 0 rgba(0, 68, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s;
+}
+
+.hidro-image:hover img {
+    transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+    .hidro-wrapper {
+        flex-direction: column-reverse;
+        /* Image on top on mobile? Or bottom. Let's do reverse so image is top or normal? Standard is Image Top or Content Top. Let's keep Content Top (normal dir) but image usually goes first in visual hierarchy if it's impactful. Let's stick to standard flex-col */
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .hidro-image {
+        width: 100%;
+    }
+}
+
 /* Owner Section */
 #owner {
     align-items: center;

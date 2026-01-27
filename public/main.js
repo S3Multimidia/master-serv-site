@@ -161,8 +161,19 @@ gsap.to(mascotMesh.position, {
     z: 0
 });
 
-// 2. Services -> Gallery (Move Mascot to Far Right to clear center stage)
-// Services ends: Mascot Left.
+// 2. Services -> Hidro (Move Mascot to Right)
+gsap.to(mascotMesh.position, {
+    scrollTrigger: {
+        trigger: "#hidro",
+        start: "top bottom",
+        end: "center center",
+        scrub: 1.5,
+        invalidateOnRefresh: true
+    },
+    x: () => getMascotX('right'),
+});
+
+// 3. Hidro -> Gallery (Move Mascot to Left)
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#gallery",
@@ -171,7 +182,7 @@ gsap.to(mascotMesh.position, {
         scrub: 1.5,
         invalidateOnRefresh: true
     },
-    x: () => getMascotX('right'), // Move to Right side
+    x: () => getMascotX('left'),
 });
 
 // Change pose to 'observing' (Pose) during gallery
@@ -183,8 +194,7 @@ ScrollTrigger.create({
 });
 
 
-// 3. Gallery -> Owner (Mascot stays Right)
-// Owner has content Left, so Mascot Right is correct.
+// 4. Gallery -> Owner (Move Mascot to Right)
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#owner",
@@ -196,9 +206,7 @@ gsap.to(mascotMesh.position, {
     x: () => getMascotX('right'),
 });
 
-// 4. Owner -> About
-// About has Text Left, so Mascot Right is good.
-// Maybe swap back to Hero?
+// 5. Owner -> About (Stay Right)
 ScrollTrigger.create({
     trigger: "#about",
     start: "top 70%",
@@ -206,6 +214,7 @@ ScrollTrigger.create({
     onLeaveBack: () => swapTexture(texPose)
 });
 
+// Ensure it definitely stays/is at right
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#about",
@@ -217,7 +226,7 @@ gsap.to(mascotMesh.position, {
     x: () => getMascotX('right'),
 });
 
-// 5. About -> Footer (Thumbs Up)
+// 6. About -> Footer (Thumbs Up)
 ScrollTrigger.create({
     trigger: "#contact",
     start: "top 80%",
