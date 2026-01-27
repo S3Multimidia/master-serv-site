@@ -64,16 +64,17 @@ let mascotMesh;
 const textureLoader = new THREE.TextureLoader();
 
 // Updated Paths: Using absolute paths from root
-const texHero = textureLoader.load('/assets/mascote_1.png',
-    () => console.log('Hero texture loaded'),
-    undefined,
-    (err) => console.error('Error loading Hero texture:', err)
-);
+const texHero = textureLoader.load('/assets/mascote_1.png', (tex) => {
+    // Fix Aspect Ratio on Initial Load
+    const aspect = tex.image.width / tex.image.height;
+    mascotMesh.scale.x = aspect;
+    console.log('Hero texture loaded, aspect:', aspect);
+});
 const texPose = textureLoader.load('/assets/mascote_3.png');
 const texThumbs = textureLoader.load('/assets/mascote_0.png');
 
-// Mascot Plane
-const mascotGeometry = new THREE.PlaneGeometry(4, 4);
+// Mascot Plane (Base Height = 5 units)
+const mascotGeometry = new THREE.PlaneGeometry(5, 5);
 const mascotMaterial = new THREE.MeshBasicMaterial({
     map: texHero,
     transparent: true,
@@ -87,14 +88,14 @@ function animate() {
     requestAnimationFrame(animate);
 
     // Infinite tunnel movement
-    tunnel1.position.z += 0.1;
-    tunnel2.position.z += 0.1;
+    tunnel1.position.z += 0.05; // Slower for classier feel
+    tunnel2.position.z += 0.05;
 
     if (tunnel1.position.z > 10) tunnel1.position.z = -70;
     if (tunnel2.position.z > 10) tunnel2.position.z = -70;
 
     // Subtle mascot float
-    mascotMesh.position.y += Math.sin(Date.now() * 0.002) * 0.005;
+    mascotMesh.position.y += Math.sin(Date.now() * 0.001) * 0.002;
 
     renderer.render(scene, camera);
 }
@@ -102,14 +103,31 @@ animate();
 
 // --- Scroll Interactions (GSAP) ---
 
+// Helper function to swap texture smoothly
+function swapTexture(texture) {
+    if (mascotMaterial.map !== texture) {
+        // Quick "pop" effect to hide the swap
+        gsap.to(mascotMesh.scale, {
+            duration: 0.1, x: 0, y: 0, onComplete: () => {
+                mascotMaterial.map = texture;
+                mascotMaterial.needsUpdate = true;
+                // Recalculate aspect ratio for new texture
+                const aspect = texture.image ? (texture.image.width / texture.image.height) : 1;
+
+                gsap.to(mascotMesh.scale, { duration: 0.2, x: aspect, y: 1 });
+            }
+        });
+    }
+}
+
 // 1. Hero -> Services
-// Move mascot to left and change global lighting
+// Move mascot to left
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#services",
-        start: "top bottom",
+        start: "top bottom", // Starts when top of #services hits bottom of screen
         end: "center center",
-        scrub: 1
+        scrub: 1.5 // Smoother lag
     },
     x: -3,
     y: 0,
@@ -119,15 +137,9 @@ gsap.to(mascotMesh.position, {
 // 2. Services -> About (Change Pose)
 ScrollTrigger.create({
     trigger: "#about",
-    start: "top center",
-    onEnter: () => {
-        mascotMaterial.map = texPose;
-        mascotMaterial.needsUpdate = true;
-    },
-    onLeaveBack: () => {
-        mascotMaterial.map = texHero;
-        mascotMaterial.needsUpdate = true;
-    }
+    start: "top 70%", // Earlier trigger
+    onEnter: () => swapTexture(texPose),
+    onLeaveBack: () => swapTexture(texHero)
 });
 
 // Move mascot to right for About section
@@ -136,7 +148,7 @@ gsap.to(mascotMesh.position, {
         trigger: "#about",
         start: "top bottom",
         end: "center center",
-        scrub: 1
+        scrub: 2 // Even smoother
     },
     x: 3,
 });
@@ -144,15 +156,9 @@ gsap.to(mascotMesh.position, {
 // 3. About -> Footer (Thumbs Up)
 ScrollTrigger.create({
     trigger: "#contact",
-    start: "top bottom",
-    onEnter: () => {
-        mascotMaterial.map = texThumbs;
-        mascotMaterial.needsUpdate = true;
-    },
-    onLeaveBack: () => {
-        mascotMaterial.map = texPose;
-        mascotMaterial.needsUpdate = true;
-    }
+    start: "top 80%",
+    onEnter: () => swapTexture(texThumbs),
+    onLeaveBack: () => swapTexture(texPose)
 });
 
 gsap.to(mascotMesh.position, {
@@ -160,11 +166,14 @@ gsap.to(mascotMesh.position, {
         trigger: "#contact",
         start: "top bottom",
         end: "bottom bottom",
-        scrub: 1
+        scrub: 1.5
     },
     x: 0,
     y: 0.5,
-    scale: 1.2
+    // Note: Scale is handled by the swap function usually, but we can boost it here
+    onUpdate: function () {
+        // Optional extra logic
+    }
 });
 
 // --- Responsive ---
@@ -174,14 +183,5 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     // Adjust mascot scale for mobile
-    if (window.innerWidth < 768) {
-        mascotMesh.scale.set(0.6, 0.6, 0.6);
-    } else {
-        mascotMesh.scale.set(1, 1, 1);
-    }
+    // Note: Aspect ratio logic might need re-triggering here in a real app
 });
-
-// Initial check
-if (window.innerWidth < 768) {
-    mascotMesh.scale.set(0.6, 0.6, 0.6);
-}
