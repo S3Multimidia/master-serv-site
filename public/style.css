@@ -489,13 +489,38 @@ h3 {
 @media (max-width: 768px) {
     .hidro-wrapper {
         flex-direction: column-reverse;
-        /* Image on top on mobile? Or bottom. Let's do reverse so image is top or normal? Standard is Image Top or Content Top. Let's keep Content Top (normal dir) but image usually goes first in visual hierarchy if it's impactful. Let's stick to standard flex-col */
-        flex-direction: column;
         gap: 2rem;
+        padding: 0 1rem;
     }
 
     .hidro-image {
         width: 100%;
+        margin-top: 1rem;
+    }
+
+    #hidro .section-title {
+        font-size: 2rem;
+        /* Reduce title size heavily on mobile */
+        word-break: break-word;
+        /* Ensure it breaks */
+        line-height: 1.2;
+    }
+
+    #hidro .highlight-text {
+        font-size: 0.9em;
+        /* Adjust relative size */
+        display: block;
+        /* Ensure it wraps if needed */
+    }
+
+    .hidro-content {
+        /* Add a semi-transparent background to text to ensure readability over mascot if overlap occurs */
+        background: rgba(5, 10, 20, 0.85);
+        /* Matches dark bg but opaque */
+        padding: 1.5rem;
+        border-radius: 15px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 }
 
