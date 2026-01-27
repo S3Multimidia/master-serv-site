@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Serv - O Super-Herói do Desentupimento</title>
+    <meta name="description" content="Entupiu? Resolvemos AGORA! Atendimento 24h na Baixada Santista. Desentupimento de pias, ralos, vasos e mais.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- GSAP & Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+    <!-- WebGL Container -->
+    <div id="webgl-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="assets/mascote_2.png" alt="Master Serv Logo" id="nav-logo">
+        </div>
+        <div class="nav-links">
+            <a href="#services">Serviços</a>
+            <a href="#about">Sobre</a>
+            <a href="#contact" class="btn-primary">Emergência 24h</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="section">
+            <div class="container hero-content">
+                <h1 class="hero-title">
+                    <span class="glitch" data-text="Entupiu?">Entupiu?</span><br>
+                    <span class="highlight">Resolvemos AGORA!</span>
+                </h1>
+                <p class="hero-subtitle">O Super-Herói do desentupimento chegou na Baixada Santista.</p>
+                <a href="https://wa.me/5513991779724" class="btn-pulsing">
+                    ☎ Chamar Herói no WhatsApp
+                </a>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="section">
+            <div class="container">
+                <h2 class="section-title">Nossos Poderes</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <h3>Pia</h3>
+                        <p>Remoção rápida de obstruções.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Ralos</h3>
+                        <p>Solução imediata contra alagamentos.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Vaso Sanitário</h3>
+                        <p>Restabelecemos o uso imediato.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Tanque</h3>
+                        <p>Desentupimento eficiente.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Caixa de Gordura</h3>
+                        <p>Limpeza completa e preventiva.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Hidrojateamento</h3>
+                        <p>Tecnologia para tubulações complexas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About / Social Proof Section -->
+        <section id="about" class="section">
+            <div class="container about-content">
+                <div class="about-text">
+                    <h2 class="section-title">Missão Resgate</h2>
+                    <p class="lead">A Master Serv é referência na Baixada Santista.</p>
+                    <p>Atendemos residências, comércios e indústrias com rapidez, segurança e preço justo. Chegamos voando para resolver seu problema!</p>
+                    <ul class="features-list">
+                        <li>⚡ Chegada Rápida</li>
+                        <li>🛡️ Atendimento 24/7</li>
+                        <li>🔧 Equipamentos Modernos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer / CTA -->
+        <footer id="contact" class="section footer">
+            <div class="container footer-content">
+                <h2>Como podemos te ajudar AGORA?</h2>
+                <a href="https://wa.me/5513991779724" class="btn-giant">
+                    FALE COM NOSSA CENTRAL <br>
+                    ☎ (13) 9 9177-9724
+                </a>
+                <div class="social-links">
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                </div>
+                <p>&copy; 2026 Master Serv. Todos os direitos reservados.</p>
+            </div>
+        </footer>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>
