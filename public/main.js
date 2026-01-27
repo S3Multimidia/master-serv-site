@@ -1,6 +1,18 @@
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
+// Fix Mobile Scroll Issue: Prevent browser from remembering scroll position
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+// Force scroll to top on load and refresh
+window.onload = function () {
+    window.scrollTo(0, 0);
+    // Double check slightly later for some mobile browsers
+    setTimeout(() => window.scrollTo(0, 0), 100);
+}
+
 // --- Three.js Setup ---
 const container = document.getElementById('webgl-container');
 const scene = new THREE.Scene();
