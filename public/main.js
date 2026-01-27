@@ -104,19 +104,36 @@ animate();
 // --- Scroll Interactions (GSAP) ---
 
 // Helper function to swap texture smoothly
+// Helper function to swap texture smoothly (Spin Effect)
 function swapTexture(texture) {
     if (mascotMaterial.map !== texture) {
-        // Quick "pop" effect to hide the swap
-        gsap.to(mascotMesh.scale, {
-            duration: 0.1, x: 0, y: 0, onComplete: () => {
+
+        // Kill any ongoing tweens on rotation to avoid conflict
+        gsap.killTweensOf(mascotMesh.rotation);
+
+        const tl = gsap.timeline();
+
+        // Phase 1: Rotate to 90 degrees (invisible edge)
+        tl.to(mascotMesh.rotation, {
+            duration: 0.15,
+            y: Math.PI / 2,
+            ease: "power2.in"
+        })
+            // Phase 2: Swap Texture & Aspect Ratio
+            .call(() => {
                 mascotMaterial.map = texture;
                 mascotMaterial.needsUpdate = true;
+
                 // Recalculate aspect ratio for new texture
                 const aspect = texture.image ? (texture.image.width / texture.image.height) : 1;
-
-                gsap.to(mascotMesh.scale, { duration: 0.2, x: aspect, y: 1 });
-            }
-        });
+                mascotMesh.scale.x = aspect;
+            })
+            // Phase 3: Complete rotation to 0 (360)
+            .to(mascotMesh.rotation, {
+                duration: 0.25,
+                y: 0,
+                ease: "back.out(1.7)" // Elastic finish
+            });
     }
 }
 
