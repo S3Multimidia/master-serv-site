@@ -63,15 +63,16 @@ tunnelGroup.add(tunnel2);
 let mascotMesh;
 const textureLoader = new THREE.TextureLoader();
 
-// Updated Paths: Using absolute paths from root
-const texHero = textureLoader.load('/assets/mascote_1.png', (tex) => {
+// Updated Paths: Using relative paths (better for GitHub Pages / local)
+const texHero = textureLoader.load('assets/mascote_1.png', (tex) => {
     // Fix Aspect Ratio on Initial Load
     const aspect = tex.image.width / tex.image.height;
     mascotMesh.scale.x = aspect;
     console.log('Hero texture loaded, aspect:', aspect);
 });
-const texPose = textureLoader.load('/assets/mascote_3.png');
-const texThumbs = textureLoader.load('/assets/mascote_0.png');
+const texPose = textureLoader.load('assets/mascote_3.png');
+const texThumbs = textureLoader.load('assets/mascote_0.png');
+const texOwner = textureLoader.load('assets/mascote_2.png'); // Reuse Logo mascot or Pose for Owner section? using Pose for now
 
 // Mascot Plane (Base Height = 5 units)
 const mascotGeometry = new THREE.PlaneGeometry(5, 5);
@@ -103,7 +104,6 @@ animate();
 
 // --- Scroll Interactions (GSAP) ---
 
-// Helper function to swap texture smoothly
 // Helper function to swap texture smoothly (Spin Effect)
 function swapTexture(texture) {
     if (mascotMaterial.map !== texture) {
@@ -137,8 +137,6 @@ function swapTexture(texture) {
     }
 }
 
-// --- Scroll Interactions (GSAP) ---
-
 // Responsive value helper
 function getMascotX(direction) {
     const isMobile = window.innerWidth < 768;
@@ -163,15 +161,39 @@ gsap.to(mascotMesh.position, {
     z: 0
 });
 
-// 2. Services -> About (Change Pose)
+// 2. Services -> Owner (Move Right)
+// Owner has Image on LEFT, so Mascot goes RIGHT
+gsap.to(mascotMesh.position, {
+    scrollTrigger: {
+        trigger: "#owner",
+        start: "top bottom",
+        end: "center center",
+        scrub: 1.5,
+        invalidateOnRefresh: true
+    },
+    x: () => getMascotX('right'),
+});
+
+// Change pose for Owner (Using pose texture)
+ScrollTrigger.create({
+    trigger: "#owner",
+    start: "top 70%",
+    onEnter: () => swapTexture(texPose),
+    onLeaveBack: () => swapTexture(texHero) // Back to Hero when going up to Services
+});
+
+
+// 3. Owner -> About (Stay Right? Or Center?)
+// About has Text LEFT. Mascot should be RIGHT.
+// It's already at Right from Owner section, so we just ensure it stays/swaps texture.
 ScrollTrigger.create({
     trigger: "#about",
     start: "top 70%",
-    onEnter: () => swapTexture(texPose),
-    onLeaveBack: () => swapTexture(texHero)
+    onEnter: () => swapTexture(texHero), // Change pose again? Or keep same? Let's use Hero for variety
+    onLeaveBack: () => swapTexture(texPose)
 });
 
-// Move mascot to Right (so About content is on Left)
+// Ensure position is maintained (optional, but good for stability)
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#about",
@@ -183,12 +205,12 @@ gsap.to(mascotMesh.position, {
     x: () => getMascotX('right'),
 });
 
-// 3. About -> Footer (Thumbs Up)
+// 4. About -> Footer (Thumbs Up)
 ScrollTrigger.create({
     trigger: "#contact",
     start: "top 80%",
     onEnter: () => swapTexture(texThumbs),
-    onLeaveBack: () => swapTexture(texPose)
+    onLeaveBack: () => swapTexture(texHero)
 });
 
 gsap.to(mascotMesh.position, {
