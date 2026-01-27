@@ -13,28 +13,39 @@ camera.position.z = 5;
 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0); // Transparent background
 container.appendChild(renderer.domElement);
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Increased intensity
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(0x00ff9d, 1);
+const pointLight = new THREE.PointLight(0x00ff9d, 2);
 pointLight.position.set(5, 5, 5);
 scene.add(pointLight);
 
 // --- Objects ---
+
+// DEBUG: Red Cube (To verify Three.js is running)
+// If you see this cube but not the mascot, the issue is the image path.
+/*
+const debugGeo = new THREE.BoxGeometry(1, 1, 1);
+const debugMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const debugCube = new THREE.Mesh(debugGeo, debugMat);
+debugCube.position.set(-2, 2, 0); // Top left
+scene.add(debugCube);
+*/
 
 // 1. The Pipe Tunnel (Cylinders)
 const tunnelGroup = new THREE.Group();
 scene.add(tunnelGroup);
 
 const tunnelGeometry = new THREE.CylinderGeometry(10, 10, 40, 32, 20, true);
-const tunnelMaterial = new THREE.MeshBasicMaterial({ 
-    color: 0x0044ff, 
-    wireframe: true, 
-    transparent: true, 
-    opacity: 0.1 
+const tunnelMaterial = new THREE.MeshBasicMaterial({
+    color: 0x0044ff,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.15
 });
 
 // Create two tunnel segments for infinite scrolling effect
@@ -52,15 +63,19 @@ tunnelGroup.add(tunnel2);
 let mascotMesh;
 const textureLoader = new THREE.TextureLoader();
 
-// Load textures
-const texHero = textureLoader.load('assets/mascote_1.png'); // Hero pose
-const texPose = textureLoader.load('assets/mascote_3.png'); // Thinking/Pointing
-const texThumbs = textureLoader.load('assets/mascote_0.png'); // Thumbs up
+// Updated Paths: Using absolute paths from root
+const texHero = textureLoader.load('/assets/mascote_1.png',
+    () => console.log('Hero texture loaded'),
+    undefined,
+    (err) => console.error('Error loading Hero texture:', err)
+);
+const texPose = textureLoader.load('/assets/mascote_3.png');
+const texThumbs = textureLoader.load('/assets/mascote_0.png');
 
 // Mascot Plane
 const mascotGeometry = new THREE.PlaneGeometry(4, 4);
-const mascotMaterial = new THREE.MeshBasicMaterial({ 
-    map: texHero, 
+const mascotMaterial = new THREE.MeshBasicMaterial({
+    map: texHero,
     transparent: true,
     side: THREE.DoubleSide
 });
@@ -157,7 +172,7 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
+
     // Adjust mascot scale for mobile
     if (window.innerWidth < 768) {
         mascotMesh.scale.set(0.6, 0.6, 0.6);
