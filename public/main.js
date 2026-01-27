@@ -26,16 +26,6 @@ scene.add(pointLight);
 
 // --- Objects ---
 
-// DEBUG: Red Cube (To verify Three.js is running)
-// If you see this cube but not the mascot, the issue is the image path.
-/*
-const debugGeo = new THREE.BoxGeometry(1, 1, 1);
-const debugMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const debugCube = new THREE.Mesh(debugGeo, debugMat);
-debugCube.position.set(-2, 2, 0); // Top left
-scene.add(debugCube);
-*/
-
 // 1. The Pipe Tunnel (Cylinders)
 const tunnelGroup = new THREE.Group();
 scene.add(tunnelGroup);
@@ -68,11 +58,9 @@ const texHero = textureLoader.load('assets/mascote_1.png', (tex) => {
     // Fix Aspect Ratio on Initial Load
     const aspect = tex.image.width / tex.image.height;
     mascotMesh.scale.x = aspect;
-    console.log('Hero texture loaded, aspect:', aspect);
 });
 const texPose = textureLoader.load('assets/mascote_3.png');
 const texThumbs = textureLoader.load('assets/mascote_0.png');
-const texOwner = textureLoader.load('assets/mascote_2.png'); // Reuse Logo mascot or Pose for Owner section? using Pose for now
 
 // Mascot Plane (Base Height = 5 units)
 const mascotGeometry = new THREE.PlaneGeometry(5, 5);
@@ -161,8 +149,30 @@ gsap.to(mascotMesh.position, {
     z: 0
 });
 
-// 2. Services -> Owner (Move Right)
-// Owner has Image on LEFT, so Mascot goes RIGHT
+// 2. Services -> Gallery (Move Mascot to Far Right to clear center stage)
+// Services ends: Mascot Left.
+gsap.to(mascotMesh.position, {
+    scrollTrigger: {
+        trigger: "#gallery",
+        start: "top bottom",
+        end: "center center",
+        scrub: 1.5,
+        invalidateOnRefresh: true
+    },
+    x: () => getMascotX('right'), // Move to Right side
+});
+
+// Change pose to 'observing' (Pose) during gallery
+ScrollTrigger.create({
+    trigger: "#gallery",
+    start: "top 70%",
+    onEnter: () => swapTexture(texPose),
+    onLeaveBack: () => swapTexture(texHero)
+});
+
+
+// 3. Gallery -> Owner (Mascot stays Right)
+// Owner has content Left, so Mascot Right is correct.
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#owner",
@@ -174,26 +184,16 @@ gsap.to(mascotMesh.position, {
     x: () => getMascotX('right'),
 });
 
-// Change pose for Owner (Using pose texture)
-ScrollTrigger.create({
-    trigger: "#owner",
-    start: "top 70%",
-    onEnter: () => swapTexture(texPose),
-    onLeaveBack: () => swapTexture(texHero) // Back to Hero when going up to Services
-});
-
-
-// 3. Owner -> About (Stay Right? Or Center?)
-// About has Text LEFT. Mascot should be RIGHT.
-// It's already at Right from Owner section, so we just ensure it stays/swaps texture.
+// 4. Owner -> About
+// About has Text Left, so Mascot Right is good.
+// Maybe swap back to Hero?
 ScrollTrigger.create({
     trigger: "#about",
     start: "top 70%",
-    onEnter: () => swapTexture(texHero), // Change pose again? Or keep same? Let's use Hero for variety
+    onEnter: () => swapTexture(texHero),
     onLeaveBack: () => swapTexture(texPose)
 });
 
-// Ensure position is maintained (optional, but good for stability)
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#about",
@@ -205,7 +205,7 @@ gsap.to(mascotMesh.position, {
     x: () => getMascotX('right'),
 });
 
-// 4. About -> Footer (Thumbs Up)
+// 5. About -> Footer (Thumbs Up)
 ScrollTrigger.create({
     trigger: "#contact",
     start: "top 80%",
@@ -225,7 +225,7 @@ gsap.to(mascotMesh.position, {
     y: 0.5,
 });
 
-// --- Responsive ---
+// --- Responsive THREE.js ---
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -233,4 +233,102 @@ window.addEventListener('resize', () => {
 
     // Refresh ScrollTrigger to recalculate 'x' values
     ScrollTrigger.refresh();
+});
+
+
+// --- 3D Carousel Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    const carouselContainer = document.querySelector('.carousel-3d-container');
+    const slides = document.querySelectorAll('.carousel-3d-slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Safety check
+    if (!carouselContainer || slides.length === 0) return;
+
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+    // Calculate angle for each slide: 360 / total
+    const anglePerSlide = 360 / totalSlides;
+
+    function updateCarousel() {
+        // Calculate dynamic radius based on slide width so they don't overlap too much
+        // Circumference ~= total * width. Radius = C / 2pi
+        // Or simpler: tan(theta) = (w/2) / r -> r = (w/2) / tan(theta)
+        // theta = 180 / totalSlides (half the angle per slide)
+
+        let slideWidth = slides[0].offsetWidth;
+        if (slideWidth === 0) slideWidth = 300; // Fallback if hidden
+
+        const thetaRad = (Math.PI / totalSlides);
+        const radius = Math.round((slideWidth / 2) / Math.tan(thetaRad)) + 50; // +50 spacing
+
+        // Rotate the container to show current slide
+        const angle = currentIndex * -anglePerSlide;
+        carouselContainer.style.transform = `translateZ(-${radius}px) rotateY(${angle}deg)`;
+
+        // Update active class
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            let normalizedIndex = currentIndex % totalSlides;
+            if (normalizedIndex < 0) normalizedIndex += totalSlides;
+
+            if (index === normalizedIndex) {
+                slide.classList.add('active');
+            }
+        });
+    }
+
+    // Initialize positions of slides in 3D space
+    function initPositions() {
+        let slideWidth = slides[0].offsetWidth;
+        if (slideWidth === 0) slideWidth = 300;
+
+        const thetaRad = (Math.PI / totalSlides);
+        const radius = Math.round((slideWidth / 2) / Math.tan(thetaRad)) + 50;
+
+        slides.forEach((slide, index) => {
+            const angle = index * anglePerSlide;
+            // Place slide at angle and radius, facing outward
+            slide.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+        });
+
+        // Initial update
+        updateCarousel();
+    }
+
+    // Give time for layout to settle (images load)
+    setTimeout(initPositions, 100);
+    window.addEventListener('resize', initPositions);
+
+    // Event Listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            currentIndex++;
+            updateCarousel();
+            resetAutoPlay();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            currentIndex--;
+            updateCarousel();
+            resetAutoPlay();
+        });
+    }
+
+    // Auto rotate
+    let autoPlayInterval = setInterval(() => {
+        currentIndex++;
+        updateCarousel();
+    }, 4000);
+
+    function resetAutoPlay() {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = setInterval(() => {
+            currentIndex++;
+            updateCarousel();
+        }, 4000);
+    }
 });

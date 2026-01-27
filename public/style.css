@@ -259,6 +259,149 @@ h3 {
     color: var(--color-text);
 }
 
+/* Gallery */
+#gallery {
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+    /* Reduced padding for gallery */
+    margin: 50px 0;
+}
+
+.center-title {
+    text-align: center;
+    border-left: none;
+    border-bottom: 5px solid var(--color-primary);
+    display: inline-block;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+}
+
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 3D Carousel */
+.carousel-scene {
+    width: 100%;
+    height: 500px;
+    perspective: 1000px;
+    /* 3D Depth */
+    margin: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Hide overflow to prevent scrollbar issues */
+}
+
+.carousel-3d-container {
+    width: 300px;
+    /* Base width of one slide */
+    height: 400px;
+    /* Base height */
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s ease-out;
+    /* Smooth rotation */
+}
+
+.carousel-3d-slide {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    left: 0;
+    top: 0;
+    /* Border/Style */
+    border: 2px solid rgba(0, 255, 157, 0.3);
+    border-radius: 15px;
+    background: #000;
+    overflow: hidden;
+    /* transition: opacity 0.5s; optional */
+    /* Ensure content is visible */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-3d-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    /* Prevent drag */
+}
+
+/* Dim inactive slides slightly */
+.carousel-3d-slide::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: background 0.5s;
+    pointer-events: none;
+}
+
+.carousel-3d-slide.active::after {
+    background: rgba(0, 0, 0, 0);
+    /* Active slide is bright */
+}
+
+.carousel-nav {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    z-index: 20;
+    /* Ensure clickable */
+    position: relative;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:hover {
+    background: var(--color-primary);
+    color: #000;
+    box-shadow: 0 0 15px var(--color-primary);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .carousel-scene {
+        height: 400px;
+        perspective: 600px;
+        /* Less depth on mobile */
+    }
+
+    .carousel-3d-container {
+        width: 220px;
+        height: 300px;
+    }
+
+    .carousel-3d-slide {
+        width: 220px;
+        height: 300px;
+    }
+}
+
 /* Owner Section */
 #owner {
     align-items: center;
@@ -400,14 +543,17 @@ h3 {
         padding: 1.5rem;
         gap: 2rem;
     }
+
     .owner-image-container {
         flex: 0 0 100%;
         width: 100%;
         margin-bottom: 0;
     }
+
     .owner-img {
         box-shadow: -5px 5px 0 var(--color-primary);
     }
+
     .quote-box {
         padding: 1rem;
     }
