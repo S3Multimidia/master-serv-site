@@ -113,17 +113,22 @@ h3 {
 
 /* Hero */
 #hero {
-    align-items: flex-start;
-    /* Left align text to leave room for mascot in center/right */
-    text-align: left;
+    align-items: center;
+    /* Center vertically */
+    display: flex;
+    justify-content: flex-start;
+    /* Align content to the left */
 }
 
 .hero-content {
-    max-width: 600px;
+    max-width: 50%;
+    /* limit width to allow space for mascot */
+    padding-right: 2rem;
 }
 
 .hero-title {
-    font-size: 5rem;
+    font-size: 4rem;
+    /* Slightly reduced for better fit */
     margin-bottom: 1.5rem;
     text-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
 }
@@ -137,6 +142,7 @@ h3 {
     font-size: 1.5rem;
     color: var(--color-text-muted);
     margin-bottom: 2.5rem;
+    max-width: 400px;
 }
 
 .btn-pulsing {
@@ -173,15 +179,18 @@ h3 {
 
 /* Services */
 #services {
-    align-items: flex-end;
-    /* Push content to right/left to interact with mascot */
+    align-items: center;
+    justify-content: flex-end;
+    /* Push content to the right */
+    display: flex;
 }
 
 #services .container {
     margin-left: auto;
     margin-right: 0;
-    max-width: 700px;
-    /* Constrain width so it doesn't overlap center too much */
+    width: 50%;
+    /* Occupy right half */
+    padding-left: 2rem;
 }
 
 .section-title {
@@ -194,7 +203,8 @@ h3 {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    /* Force 2 columns */
     gap: 1.5rem;
 }
 
@@ -221,6 +231,9 @@ h3 {
 /* About */
 #about {
     align-items: center;
+    justify-content: flex-start;
+    /* Push content to left */
+    display: flex;
 }
 
 .about-content {
@@ -229,7 +242,9 @@ h3 {
     padding: 3rem;
     border-radius: 20px;
     border: 1px solid var(--color-secondary);
-    max-width: 800px;
+    max-width: 50%;
+    /* Occupy left half */
+    margin-right: auto;
 }
 
 .features-list {
@@ -248,6 +263,10 @@ h3 {
 .footer {
     text-align: center;
     background: linear-gradient(to top, rgba(0, 0, 0, 1), transparent);
+    /* Footer needs to be full width but content centered/bottom */
+    justify-content: flex-end;
+    /* Make room for mascot at top? No, mascot is center. */
+    padding-bottom: 50px;
 }
 
 .btn-giant {
@@ -272,8 +291,30 @@ h3 {
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+
+    .hero-content,
+    #services .container,
+    .about-content {
+        max-width: 100%;
+        width: 100%;
+        text-align: center;
+        padding: 0;
+    }
+
+    #hero {
+        justify-content: center;
+        align-items: flex-end;
+        /* Text at bottom on mobile */
+        padding-bottom: 100px;
+        /* Space for mascot above */
+    }
+
     .hero-title {
         font-size: 3rem;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
     }
 
     .navbar {
@@ -282,10 +323,5 @@ h3 {
 
     .nav-links {
         display: none;
-        /* Simple hide, good for now */
-    }
-
-    #services .container {
-        margin: 0 auto;
     }
 }

@@ -137,16 +137,28 @@ function swapTexture(texture) {
     }
 }
 
+// --- Scroll Interactions (GSAP) ---
+
+// Responsive value helper
+function getMascotX(direction) {
+    const isMobile = window.innerWidth < 768;
+    // On desktop, move further out (5). On mobile, stay closer or center.
+    if (direction === 'left') return isMobile ? 0 : -5;
+    if (direction === 'right') return isMobile ? 0 : 5;
+    return 0;
+}
+
 // 1. Hero -> Services
-// Move mascot to left
+// Move mascot from center to Left (so services can appear on Right)
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#services",
-        start: "top bottom", // Starts when top of #services hits bottom of screen
+        start: "top bottom",
         end: "center center",
-        scrub: 1.5 // Smoother lag
+        scrub: 1.5,
+        invalidateOnRefresh: true // Important for resize
     },
-    x: -3,
+    x: () => getMascotX('left'),
     y: 0,
     z: 0
 });
@@ -154,20 +166,21 @@ gsap.to(mascotMesh.position, {
 // 2. Services -> About (Change Pose)
 ScrollTrigger.create({
     trigger: "#about",
-    start: "top 70%", // Earlier trigger
+    start: "top 70%",
     onEnter: () => swapTexture(texPose),
     onLeaveBack: () => swapTexture(texHero)
 });
 
-// Move mascot to right for About section
+// Move mascot to Right (so About content is on Left)
 gsap.to(mascotMesh.position, {
     scrollTrigger: {
         trigger: "#about",
         start: "top bottom",
         end: "center center",
-        scrub: 2 // Even smoother
+        scrub: 2,
+        invalidateOnRefresh: true
     },
-    x: 3,
+    x: () => getMascotX('right'),
 });
 
 // 3. About -> Footer (Thumbs Up)
@@ -183,14 +196,11 @@ gsap.to(mascotMesh.position, {
         trigger: "#contact",
         start: "top bottom",
         end: "bottom bottom",
-        scrub: 1.5
+        scrub: 1.5,
+        invalidateOnRefresh: true
     },
-    x: 0,
+    x: 0, // Back to center
     y: 0.5,
-    // Note: Scale is handled by the swap function usually, but we can boost it here
-    onUpdate: function () {
-        // Optional extra logic
-    }
 });
 
 // --- Responsive ---
@@ -199,6 +209,6 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Adjust mascot scale for mobile
-    // Note: Aspect ratio logic might need re-triggering here in a real app
+    // Refresh ScrollTrigger to recalculate 'x' values
+    ScrollTrigger.refresh();
 });
