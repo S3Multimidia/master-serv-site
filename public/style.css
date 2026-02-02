@@ -434,7 +434,8 @@ h3 {
     font-size: 0.8em;
 }
 
-.hidro-content p {
+.hidro-content p,
+.hidro-description {
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
@@ -499,11 +500,12 @@ h3 {
     }
 
     #hidro .section-title {
-        font-size: 2rem;
-        /* Reduce title size heavily on mobile */
-        word-break: break-word;
-        /* Ensure it breaks */
-        line-height: 1.2;
+        font-size: 1.8rem;
+        /* Balanced size for mobile */
+        word-break: normal;
+        overflow-wrap: normal;
+        line-height: 1.1;
+        margin-bottom: 1rem;
     }
 
     #hidro .highlight-text {
@@ -794,5 +796,159 @@ h3 {
         padding: 1.2rem 1.5rem;
         white-space: nowrap;
         max-width: 90%;
+    }
+}
+
+/* =========================================
+   CSS Updates for Master Serv - Refactoring & Motion
+   ========================================= */
+
+/* 1. Animation System (Reveal on Scroll) */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 2. Textual Dopamine Blocks */
+.dopamine-blocks {
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.dopamine-item {
+    display: flex;
+    align-items: center;
+    /* Center vertically for cleaner look */
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    border-left: 3px solid var(--color-primary);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+}
+
+.dopamine-item:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dopamine-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.dopamine-text strong {
+    display: block;
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.dopamine-text p {
+    font-size: 0.95rem;
+    color: #ccc;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* 3. Improved Typography & Title Fixes */
+/* Ensure big words fit on mobile without ugly breaks */
+.section-title {
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    word-wrap: normal;
+    overflow-wrap: normal;
+    hyphens: none;
+    white-space: normal;
+}
+
+#hidro .section-title {
+    font-size: clamp(1.8rem, 6vw, 3.5rem);
+    /* Slightly tighter clamp for this specific word */
+    letter-spacing: -1px;
+    /* Tighter letter spacing helps fit */
+}
+
+.highlight-text {
+    display: block;
+    color: var(--color-primary);
+    font-size: 0.6em;
+    /* Relative to the h2 */
+    letter-spacing: 2px;
+    margin-top: 0.5rem;
+}
+
+/* 4. Mini Features Grid (About) */
+.features-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+}
+
+.feature-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    transition: transform 0.3s;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+}
+
+.feature-item .icon {
+    font-size: 1.8rem;
+    display: block;
+}
+
+/* 5. Highlight List (Owner) */
+.highlight-list p {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-primary);
+}
+
+.highlight-list strong {
+    color: #fff;
+    font-weight: 900;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .features-grid-mini {
+        grid-template-columns: 1fr;
+        /* Stack vertically on mobile */
+    }
+
+    .dopamine-item {
+        padding: 0.8rem;
+    }
+
+    #hidro .section-title {
+        font-size: clamp(1.4rem, 7vw, 1.8rem);
+        /* Scale down on very small screens to avoid overflow */
     }
 }

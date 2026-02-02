@@ -353,3 +353,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 });
+
+// --- Scroll Reveal Animation (Intersection Observer) ---
+// This handles the Fade-in/Slide-up "System of Movement"
+function initScrollReveal() {
+    const observerOptions = {
+        threshold: 0.15, // Trigger when 15% of the element is visible
+        rootMargin: "0px 0px -50px 0px" // Offset slightly so it triggers before the very bottom
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                // unobserve makes it run only once (like AOS 'once: true')
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const elements = document.querySelectorAll('.reveal-on-scroll');
+    elements.forEach(el => observer.observe(el));
+}
+
+// Run after load to ensure DOM is ready
+window.addEventListener('load', initScrollReveal);
